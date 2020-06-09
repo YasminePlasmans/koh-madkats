@@ -10,6 +10,7 @@ import {
 
 import Dashboard from './Dashboard/Dashboard'
 import Members from './Members/Members'
+import Archive from './Members/Archive'
 
 import { ThemeProvider } from '@material-ui/styles'
 
@@ -85,6 +86,10 @@ const App = ({ idToken }) => {
           <Switch>
             <Route path="/members" exact>
               <Members />
+            </Route>
+
+            <Route path="/members/archive" exact>
+              <Archive />
             </Route>
 
             <Route path="/" exact>

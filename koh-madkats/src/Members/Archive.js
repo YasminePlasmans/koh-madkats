@@ -1,13 +1,9 @@
-import React, {useState} from 'react'
+import React from 'react'
 
-import { Paper, Box, Typography, Button, IconButton, CircularProgress } from '@material-ui/core'
-import Add from '@material-ui/icons/Add'
-import Delete from '@material-ui/icons/Delete'
-import Edit from '@material-ui/icons/Edit'
+import { Paper, Box, Typography, IconButton, CircularProgress } from '@material-ui/core'
+import RestorePage from '@material-ui/icons/RestorePage'
 
 import Navigation from '../Navigation/Navigation'
-import AddMember from './AddMember'
-import RemoveMember from './RemoveMember'
 
 import gql from 'graphql-tag'
 import { useSubscription } from '@apollo/react-hooks'
@@ -21,48 +17,22 @@ import TableRow from '@material-ui/core/TableRow';
 
 const GET_MEMBERS = gql`
 subscription GetMembers {
-    members(order_by: {ign: asc}, where: {_not: {archived: {_eq: true}}}) {
+    members(order_by: {ign: asc}, where: {_not: {archived: {_eq: false}}}) {
       id
       ign
-      might
-      rank
+      archiveReason
+      archiveType
     }
 }`
 
-export default function Members() {
+export default function Archive() {
     const { data, loading } = useSubscription(GET_MEMBERS);
-
-    const [open, setOpen] = useState(false)
-    const [removeOpen, setRemoveOpen] = useState(false)
-    const [defaultValues, setDefaultValues] = useState({})
-    const [removeMember, setRemoveMember] = useState()
-
-    const handleRemoveMember = (member) => {
-        setRemoveMember(member)
-        setRemoveOpen(true)
-    }
 
     return (
         <>
             <Box display="flex">
                 <Navigation />
                 <Box m="16px" mt="80px" width="100%">
-                    <Box display="flex" justifyContent="space-between" mb="16px" width="100%">
-                        <Typography variant="h5">Members</Typography>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            startIcon={<Add />}
-                            onClick={() => {
-                                setDefaultValues({})
-                                setOpen(true)
-                            }}
-                        >
-                            Add member
-                        </Button>
-                        <AddMember open={open} setOpen={setOpen} defaultValues={defaultValues} />
-                        <RemoveMember open={removeOpen} setOpen={setRemoveOpen} member={removeMember} />
-                    </Box>
                     <TableContainer component={Paper}>
                         <Table size="small">
                             <TableHead>
@@ -71,10 +41,10 @@ export default function Members() {
                                         <Typography variant="subtitle2">IGN</Typography>
                                     </TableCell>
                                     <TableCell>
-                                        <Typography variant="subtitle2">Might</Typography>
+                                        <Typography variant="subtitle2">Type</Typography>
                                     </TableCell>
                                     <TableCell>
-                                        <Typography variant="subtitle2">Rank</Typography>
+                                        <Typography variant="subtitle2">Reason</Typography>
                                     </TableCell>
                                     <TableCell></TableCell>
                                 </TableRow>
@@ -87,22 +57,17 @@ export default function Members() {
                                         </TableCell>
                                     </TableRow>
                                 : data?.members?.map(line => {
-                                    const might = line.might.toLocaleString(undefined, {maximumFractionDigits:2})
 
                                     return (
                                     <TableRow key={line.id}>
                                         <TableCell>{line.ign}</TableCell>
-                                        <TableCell>{might} m</TableCell>
-                                        <TableCell>{line.rank}</TableCell>
+                                        <TableCell>{line.archiveReason}</TableCell>
+                                        <TableCell>{line.archiveType}</TableCell>
                                         <TableCell align="right">
                                             <IconButton onClick={() => {
-                                                setDefaultValues(line)
-                                                setOpen(true)
+                                                console.log(line)
                                             }}>
-                                                <Edit />
-                                            </IconButton>
-                                            <IconButton onClick={() => handleRemoveMember(line)}>
-                                                <Delete />
+                                                <RestorePage />
                                             </IconButton>
                                         </TableCell>
                                     </TableRow>

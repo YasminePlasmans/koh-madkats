@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react"
+import React, {useState} from "react"
 
 import {
     Dialog,
@@ -9,7 +9,6 @@ import {
     Button,
     Box,
     FormControl,
-    FormLabel,
     FormControlLabel,
     Radio,
     RadioGroup
@@ -78,7 +77,6 @@ mutation deleteMember ($id: uuid!) {
             <DialogContent>
                 <Box pb="16px">
                     <FormControl component="fieldset">
-                    <FormLabel component="legend">Gender</FormLabel>
                     <RadioGroup
                         name="archiveType"
                         onChange={(event) => {
