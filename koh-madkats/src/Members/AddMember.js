@@ -54,10 +54,7 @@ export default function AddMember({open, setOpen, defaultValues = {}}) {
     const handleAdd = () => {
         setOpen(false)
         addMember({
-            variables: values,
-            onError: (error) => {
-                console.log(error)
-            }
+            variables: values
         })
     }
 
@@ -77,8 +74,9 @@ export default function AddMember({open, setOpen, defaultValues = {}}) {
     const [edit, setEdit] = useState(false)
 
     const [addMember, {error: addError}] = useMutation(ADD_MEMBER);
-    console.log(addError)
     const [updateMember] = useMutation(UPDATE_MEMBER);
+
+    console.log(addError)
 
     useEffect(() => {
         setValues({

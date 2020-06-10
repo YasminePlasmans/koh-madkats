@@ -1,12 +1,10 @@
 import React from 'react'
 
 import { Paper, Box, Typography, IconButton, CircularProgress } from '@material-ui/core'
-import RestorePage from '@material-ui/icons/RestorePage'
-
-import Navigation from '../Navigation/Navigation'
+import Unarchive from '@material-ui/icons/Unarchive'
 
 import gql from 'graphql-tag'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -25,58 +23,66 @@ subscription GetMembers {
     }
 }`
 
+
+const UNARCHIVE_MEMBER = gql`
+mutation unarchiveMember ($id: uuid!) {
+    update_members(where: {id: {_eq: $id}}, _set: {archived: false}){
+        affected_rows
+    }
+}`
+
+
 export default function Archive() {
     const { data, loading } = useSubscription(GET_MEMBERS);
 
+    const [unarchiveMember] = useMutation(UNARCHIVE_MEMBER);
+
     return (
         <>
-            <Box display="flex">
-                <Navigation />
-                <Box m="16px" mt="80px" width="100%">
-                    <TableContainer component={Paper}>
-                        <Table size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>
-                                        <Typography variant="subtitle2">IGN</Typography>
+            <Box m="16px" mt="80px" width="100%">
+                <TableContainer component={Paper}>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    <Typography variant="subtitle2">IGN</Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography variant="subtitle2">Type</Typography>
+                                </TableCell>
+                                <TableCell>
+                                    <Typography variant="subtitle2">Reason</Typography>
+                                </TableCell>
+                                <TableCell></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            { loading
+                            ?   <TableRow>
+                                    <TableCell colSpan={4} align="center">
+                                        <CircularProgress />
                                     </TableCell>
-                                    <TableCell>
-                                        <Typography variant="subtitle2">Type</Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Typography variant="subtitle2">Reason</Typography>
-                                    </TableCell>
-                                    <TableCell></TableCell>
                                 </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                { loading
-                                ?   <TableRow>
-                                        <TableCell colSpan={4} align="center">
-                                            <CircularProgress />
-                                        </TableCell>
-                                    </TableRow>
-                                : data?.members?.map(line => {
+                            : data?.members?.map(line => {
 
-                                    return (
-                                    <TableRow key={line.id}>
-                                        <TableCell>{line.ign}</TableCell>
-                                        <TableCell>{line.archiveReason}</TableCell>
-                                        <TableCell>{line.archiveType}</TableCell>
-                                        <TableCell align="right">
-                                            <IconButton onClick={() => {
-                                                console.log(line)
-                                            }}>
-                                                <RestorePage />
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                    )
-                                })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Box>
+                                return (
+                                <TableRow key={line.id}>
+                                    <TableCell>{line.ign}</TableCell>
+                                    <TableCell>{line.archiveReason}</TableCell>
+                                    <TableCell>{line.archiveType}</TableCell>
+                                    <TableCell align="right">
+                                        <IconButton onClick={() => {
+                                            unarchiveMember({variables: {id: line.id}})
+                                        }}>
+                                            <Unarchive />
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             </Box>
         </>
     ) 

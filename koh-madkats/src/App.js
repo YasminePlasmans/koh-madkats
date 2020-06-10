@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import './App.css'
 import { theme } from './theme'
 
@@ -11,6 +11,10 @@ import {
 import Dashboard from './Dashboard/Dashboard'
 import Members from './Members/Members'
 import Archive from './Members/Archive'
+
+import Pints from './Pints/Pints'
+
+import Layout from './Navigation/Layout'
 
 import { ThemeProvider } from '@material-ui/styles'
 
@@ -25,8 +29,9 @@ import { makeStyles } from '@material-ui/styles'
 
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import Person from '@material-ui/icons/Person'
+import Menu from '@material-ui/icons/Menu'
 
-import {Toolbar, AppBar, Box, Typography, IconButton, Tooltip} from '@material-ui/core'
+import {Toolbar, AppBar, Box, Typography, IconButton, Tooltip, Hidden} from '@material-ui/core'
 
 import { createBrowserHistory } from "history";
 
@@ -50,6 +55,8 @@ const App = ({ idToken }) => {
   
   const history = createBrowserHistory()
 
+  const [navigationOpen, setNavigationOpen] = useState(false)
+
   return (
     <Router history={history}>
       <ApolloProvider client={client}>
@@ -57,6 +64,11 @@ const App = ({ idToken }) => {
           <AppBar position="fixed" className={classes.appBar}>
             <Toolbar>
                 <Box display="flex" flexGrow={1} alignItems="center">
+                    <Hidden smUp>
+                      <IconButton onClick={() => setNavigationOpen(!navigationOpen)}>
+                          <Menu style={{ color: 'white' }} />
+                      </IconButton>
+                    </Hidden>
                     <Box display="flex" flexGrow={1}>
                         <Typography variant="h6">
                             The Mad Kats
@@ -82,19 +94,30 @@ const App = ({ idToken }) => {
                 </Box>
             </Toolbar>
           </AppBar>
-
           <Switch>
-            <Route path="/members" exact>
-              <Members />
-            </Route>
+                <Route path="/members" exact>
+                  <Layout navigationOpen={navigationOpen} setOpen={setNavigationOpen}>
+                    <Members />
+                  </Layout>
+                </Route>
 
-            <Route path="/members/archive" exact>
-              <Archive />
-            </Route>
+                <Route path="/members/archive">
+                  <Layout navigationOpen={navigationOpen} setOpen={setNavigationOpen}>
+                    <Archive />
+                  </Layout>
+                </Route>
 
-            <Route path="/" exact>
-              <Dashboard />
-            </Route>
+                <Route path="/pints">
+                  <Layout navigationOpen={navigationOpen} setOpen={setNavigationOpen}>
+                    <Pints />
+                  </Layout>
+                </Route>
+
+                <Route path="/" exact>
+                  <Layout navigationOpen={navigationOpen} setOpen={setNavigationOpen}>
+                    <Dashboard />
+                  </Layout>
+                </Route>
           </Switch>
         </ThemeProvider>
       </ApolloProvider>
