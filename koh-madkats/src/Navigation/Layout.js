@@ -6,7 +6,7 @@ import Navigation from "./Navigation"
 export default function Layout({children, navigationOpen, setOpen}) {
     return (
         <>
-            <Box display="flex">
+            <Box display="flex" p="80px 8px">
                 <Navigation navigationOpen={navigationOpen} setOpen={setOpen} />
                 {children}
             </Box>

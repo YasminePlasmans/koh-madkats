@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {SwipeableDrawer, List, ListItem, ListItemText, ListItemIcon, Hidden, Drawer, Toolbar} from '@material-ui/core'
+import {List, ListItem, ListItemText, ListItemIcon, Hidden, Drawer, Toolbar} from '@material-ui/core'
 import DashboardIcon from "@material-ui/icons/DashboardRounded"
 
 import Icon from '@mdi/react'
@@ -15,16 +15,8 @@ import {
 
   import {useStyles} from "./Navigation.style"
 
-export default function Navigation({navigationOpen, setOpen}) {
+export default function Navigation() {
     const classes = useStyles();
-    
-    const toggleDrawer = (open) => (event) => {
-        if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-          return;
-        }
-
-        setOpen(open)
-    }
 
     return (
         <>
@@ -36,29 +28,12 @@ export default function Navigation({navigationOpen, setOpen}) {
                         paper: classes.drawerPaper,
                     }}
                     variant="permanent"
-                    open={navigationOpen}
                 >
                     <Toolbar />
                     <div className={classes.drawerContainer}>
                         <NavList />
                     </div>
                 </Drawer>
-            </Hidden>
-            <Hidden smUp>
-                <SwipeableDrawer
-                    anchor="left"
-                    className={classes.drawer}
-                    classes={{
-                        paper: classes.drawerPaper,
-                    }}
-                    open={navigationOpen}
-                    onClose={toggleDrawer(false)}
-                    onOpen={toggleDrawer(true)}
-                >
-                    <div className={classes.drawerContainer}>
-                        <NavList />
-                    </div>
-                </SwipeableDrawer>
             </Hidden>
         </>
     )

@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 
-import { Paper, Box, Typography, Button, IconButton, CircularProgress } from '@material-ui/core'
+import { Paper, Box, Typography, Button, IconButton, CircularProgress, Hidden } from '@material-ui/core'
 import Add from '@material-ui/icons/Add'
 import Delete from '@material-ui/icons/Delete'
 import Edit from '@material-ui/icons/Edit'
@@ -8,6 +8,7 @@ import Archive from '@material-ui/icons/Archive'
 
 import AddMember from './AddMember'
 import RemoveMember from './RemoveMember'
+import BottomBar from '../Navigation/BottomBar'
 
 import gql from 'graphql-tag'
 import { useSubscription } from '@apollo/react-hooks'
@@ -50,20 +51,23 @@ export default function Members() {
 
     return (
         <>
-            <Box m="16px" mt="80px" width="100%">
+            <Box width="100%">
                 <Box display="flex" justifyContent="space-between" mb="16px" width="100%">
                     <Typography variant="h5">Members</Typography>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<Add />}
-                        onClick={() => {
-                            setDefaultValues({})
-                            setOpen(true)
-                        }}
-                    >
-                        Add member
-                    </Button>
+                    
+                    <Hidden smDown> 
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            startIcon={<Add />}
+                            onClick={() => {
+                                setDefaultValues({})
+                                setOpen(true)
+                            }}
+                        >
+                            Add member
+                        </Button>
+                    </Hidden>
                     <AddMember open={open} setOpen={setOpen} defaultValues={defaultValues} />
                     <RemoveMember open={removeOpen} setOpen={setRemoveOpen} member={removeMember} />
                 </Box>
@@ -127,6 +131,10 @@ export default function Members() {
                     </NavLink>
                 </Box>
             </Box>
+            
+            <Hidden smUp> 
+                <BottomBar fabAction={() => setOpen(true)} active="members" />
+            </Hidden>
         </>
     ) 
 }
