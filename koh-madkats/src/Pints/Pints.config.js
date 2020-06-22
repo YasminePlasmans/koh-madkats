@@ -26,8 +26,6 @@ subscription GetPints($date: date!) {
       }
   }`
 
-  
-
   export const QUERY_PINTS_BY_DATE = gql`
   query getPints ($date: date!) {
     pints(where: {date: {_eq: $date}}) {

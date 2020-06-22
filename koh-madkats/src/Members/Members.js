@@ -53,7 +53,7 @@ export default function Members() {
         <>
             <Box width="100%">
                 <Box display="flex" justifyContent="space-between" mb="16px" width="100%">
-                    <Typography variant="h5">Members</Typography>
+                    <Typography variant="h5">Members {data?.members.length}/50</Typography>
                     
                     <Hidden smDown> 
                         <Button

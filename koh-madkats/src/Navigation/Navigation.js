@@ -2,6 +2,7 @@ import React from 'react'
 
 import {List, ListItem, ListItemText, ListItemIcon, Hidden, Drawer, Toolbar} from '@material-ui/core'
 import DashboardIcon from "@material-ui/icons/DashboardRounded"
+import ThumbDown from "@material-ui/icons/ThumbDown"
 
 import Icon from '@mdi/react'
 import { mdiAccountGroup } from '@mdi/js';
@@ -78,6 +79,14 @@ function NavList() {
                     </ListItemIcon>
                     <ListItemText>
                         Pints
+                    </ListItemText>
+                </ListItem>
+            </Link>
+            <Link to="/dcc" className={classes.link}>
+                <ListItem button key="Dcc" selected={match.url === '/dcc'}>
+                    <ListItemIcon><ThumbDown /></ListItemIcon>
+                    <ListItemText>
+                        DCC
                     </ListItemText>
                 </ListItem>
             </Link>

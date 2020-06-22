@@ -8,7 +8,8 @@ import DashboardIcon from '@material-ui/icons/Dashboard'
 import Icon from '@mdi/react'
 import { mdiAccountGroup } from '@mdi/js';
 import { mdiGlassMugVariant } from '@mdi/js';
-import { mdiPodiumGold } from '@mdi/js';
+import ThumbDown from "@material-ui/icons/ThumbDown"
+
 
 
 import {
@@ -39,7 +40,6 @@ export default function BottomBar ({fabAction, active}) {
                         />
                     </IconButton>
                 </Link>
-                
                 <div className={classes.grow} />
                 {
                     fabAction && (
@@ -50,8 +50,6 @@ export default function BottomBar ({fabAction, active}) {
                         </>
                     )
                 }
-                
-                
                 <Link to="/pints" className={classes.link}>
                     <IconButton color={active === "pints"  ? "secondary" : "inherit"}>
                         <Icon
@@ -64,11 +62,7 @@ export default function BottomBar ({fabAction, active}) {
                 
                 <Link to="/dcc" className={classes.link}>
                     <IconButton color={active === "dcc"  ? "secondary" : "inherit"}>
-                        <Icon
-                        path={mdiPodiumGold}
-                        title="DCC"
-                        size={1}
-                        />
+                        <ThumbDown />   
                     </IconButton>
                 </Link>
             </Toolbar>

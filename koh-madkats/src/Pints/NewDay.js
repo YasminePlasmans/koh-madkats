@@ -17,7 +17,8 @@ import {
     ListItemText,
     Checkbox,
     Typography,
-    IconButton
+    IconButton,
+    useMediaQuery
 } from "@material-ui/core"
 
 import Close from "@material-ui/icons/Close"
@@ -40,10 +41,17 @@ import {
 import {GET_MEMBERS, INSERT_PINTS, INSERT_PINTS_BY_MEMBER, QUERY_PINTS_BY_DATE} from "./Pints.config"
 import { useStyles } from "./Pints"
 
-export default function NewDay({open, setOpen, }) {
-    const classes = useStyles
-    moment.locale("en");
-    const [selectedDate, setSelectedDate] = useState(new Date());
+export default function NewDay({open, setOpen, preselectedDate}) {
+    const matches = useMediaQuery('(max-width:600px)')
+
+    const classes = useStyles()
+    moment.locale("en")
+    const [selectedDate, setSelectedDate] = useState(new Date(preselectedDate));
+    
+    useEffect(() => {
+        setSelectedDate(new Date(preselectedDate))
+    }, [preselectedDate])
+
     const [memberPints, setMemberPints] = useState({})
     const [memberRaidPints, setMemberRaidPints] = useState({})
 
@@ -55,7 +63,7 @@ export default function NewDay({open, setOpen, }) {
     const members = data?.members
 
     const [dateLogged, setDateLogged] = useState(false)
-    const { data: pints } = useQuery(QUERY_PINTS_BY_DATE, {
+    useQuery(QUERY_PINTS_BY_DATE, {
         variables: { date: moment(selectedDate).format("yyyy-MM-DD") },
         onCompleted: (data) => {
             setDateLogged(data.pints.length > 0)
@@ -126,6 +134,7 @@ export default function NewDay({open, setOpen, }) {
         setOpen(false)
         setSelectedDate(new Date())
         setMemberPints({})
+        setMemberRaidPints({})
         setFirstScreenActive(true)
 
         setLoading(false)
@@ -133,7 +142,14 @@ export default function NewDay({open, setOpen, }) {
 
     return (
         <>
-            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" TransitionComponent={Transition} fullScreen>
+            <Dialog
+                open={open}
+                aria-labelledby="form-dialog-title"
+                TransitionComponent={Transition}
+                fullScreen={matches}
+                fullWidth
+                maxWidth="sm"
+            >
                 <DialogTitle id="form-dialog-title">
                     <Box display="flex" justifyContent="space-between" alignItems="center">
                         <Typography variant="h5">Register pints</Typography>
@@ -179,7 +195,14 @@ export default function NewDay({open, setOpen, }) {
                 </DialogActions>
             </Dialog>
 
-            <Dialog open={!firstScreenActive} onClose={handleClose} aria-labelledby="form-dialog-title" TransitionComponent={TransitionLeft} fullScreen>
+            <Dialog
+                open={!firstScreenActive}
+                onClose={handleClose}
+                fullScreen={matches}
+                fullWidth
+                maxWidth="sm"
+                TransitionComponent={TransitionLeft}
+            >
                 <DialogTitle id="form-dialog-title">
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                         <Typography variant="h5">Register pints</Typography>
@@ -268,7 +291,7 @@ export default function NewDay({open, setOpen, }) {
                     <Button
                         onClick={() => setFirstScreenActive(true)}
                         color="primary"
-                        variant="contained"
+                        variant="outlined"
                         fullWidth
                         disabled={loading}
                         startIcon={<ChevronLeft />}
@@ -281,7 +304,7 @@ export default function NewDay({open, setOpen, }) {
                         variant="contained"
                         fullWidth
                         disabled={loading}
-                        endIcon={<Save />}
+                        startIcon={<Save />}
                     >
                         Save
                     </Button>

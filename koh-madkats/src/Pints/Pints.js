@@ -94,7 +94,7 @@ export default function Pints() {
                     <Button
                         variant="contained"
                         color="primary"
-                        startIcon={<Add />}
+                        startIcon={<Add />}preselectedDate
                         onClick={() => {
                             setOpen(true)
                         }}
@@ -102,7 +102,7 @@ export default function Pints() {
                         Register pints
                     </Button>
                 </Hidden>
-                <NewDay open={open} setOpen={setOpen} /> 
+                <NewDay open={open} setOpen={setOpen} preselectedDate={selectedDate} /> 
             </Box>
             
             <Box display="flex" justifyContent="space-between" alignItems="center" mb="16px" width="100%">
@@ -235,6 +235,7 @@ export default function Pints() {
                                                     {
                                                         !editPints[member.id] || !editPints[member.id].editMode
                                                         ? <Button
+                                                            color="primary"
                                                             onClick={
                                                             () => {
                                                                 setEditPints({
@@ -251,6 +252,7 @@ export default function Pints() {
                                                         </Button>
                                                         : <>
                                                             <Button
+                                                                color="primary"
                                                                 onClick={
                                                                 () => {
                                                                     setEditPints({
@@ -263,6 +265,8 @@ export default function Pints() {
                                                                 Cancel
                                                             </Button>
                                                             <Button
+                                                                color="primary"
+                                                                variant="outlined"
                                                                 onClick={
                                                                 () => {
                                                                     updatePints({

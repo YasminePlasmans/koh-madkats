@@ -1,4 +1,5 @@
 import React, {useState} from "react"
+import moment from 'moment'
 
 import {
     Dialog,
@@ -18,8 +19,8 @@ import { useMutation } from "@apollo/react-hooks";
 import gql from 'graphql-tag'
 
 const ARCHIVE_MEMBER = gql`
-mutation archiveMember ($id: uuid!, $reason: String!, $type: String!) {
-    update_members(where: {id: {_eq: $id}}, _set: {archived: true, archiveReason: $reason, archiveType: $type}){
+mutation archiveMember ($id: uuid!, $reason: String!, $type: String!, $archiveDate: date!) {
+    update_members(where: {id: {_eq: $id}}, _set: {archived: true, archiveReason: $reason, archiveType: $type, archiveDate: $archiveDate}){
         affected_rows
     }
 }`
@@ -55,7 +56,8 @@ mutation deleteMember ($id: uuid!) {
             variables: {
                 id: member.id,
                 type,
-                reason
+                reason,
+                archiveDate: moment().format('yyyy-MM-DD')
             },
             update: cache => {
                 setOpen(false)

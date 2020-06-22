@@ -48,10 +48,13 @@ import { createBrowserHistory } from "history";
  };
 
 const App = ({ idToken }) => {
-  const classes = useStyles();
-  const client = createApolloClient(idToken)
+
 
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
+
+
+  const classes = useStyles();
+  const client = createApolloClient(idToken)
   
   const history = createBrowserHistory()
 
