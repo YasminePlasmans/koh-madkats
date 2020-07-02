@@ -31,6 +31,13 @@ import Check from "@material-ui/icons/Check"
 import ExpandLess from "@material-ui/icons/ExpandLess"
 import ExpandMore from "@material-ui/icons/ExpandMore"
 
+import Icon from '@mdi/react'
+
+import { mdiCheckBoxMultipleOutline } from '@mdi/js'
+import { mdiCheckBoxOutline } from '@mdi/js'
+
+import { mdiCheckboxBlankOutline } from '@mdi/js';
+
 import NewDay from './NewDay'
 import BottomBar from '../Navigation/BottomBar'
 
@@ -104,7 +111,7 @@ export default function Pints() {
                 </Hidden>
                 <NewDay open={open} setOpen={setOpen} preselectedDate={selectedDate} /> 
             </Box>
-            
+
             <Box display="flex" justifyContent="space-between" alignItems="center" mb="16px" width="100%">
                 <IconButton onClick={() => {
                     setSelectedDate(moment(selectedDate).subtract(1, 'day').format("yyyy-MM-DD"))
@@ -141,12 +148,13 @@ export default function Pints() {
                         {
                             data?.members?.map(member => {
                                 const pint = member.pint_per_members.find(pint => pint.pint.pintType === "pint")
-                                const pintBought = !!(pint && pint.bought)
+                                const pintBought = !!(pint && pint.amountBought > 0)
                                 const raidPint = member.pint_per_members.find(pint => pint.pint.pintType === "raidPint")
-                                const raidPintBought = !!(raidPint && raidPint.bought)
+                                const raidPintBought = !!(raidPint && raidPint.amountBought === 1)
+                                const raidPintBoughtTwice = !!(raidPint && raidPint.amountBought === 2)
                                 const anyBought = pintBought || raidPintBought
-                                const allBought = pintBought && raidPintBought
-                                
+                                const allBought = pintBought && (raidPintBought || raidPintBoughtTwice)
+
                                 return (
                                     <React.Fragment key={member.id}>
                                         <ListItem
@@ -167,7 +175,7 @@ export default function Pints() {
                                                         ? <Check style={{color: pintBought ? green[500] : 'default'}} />
                                                         : <Close />
                                                 }
-                                                
+
                                             </ListItemIcon>
                                             <ListItemText primary={member.ign} />
                                             {openPints[member.id] ? <ExpandLess /> : <ExpandMore />}
@@ -179,115 +187,101 @@ export default function Pints() {
                                                     addedPintTypes.pint
                                                     ? <ListItem className={classes.nested}>
                                                         <ListItemIcon>
-                                                            {
-                                                                !editPints[member.id] || !editPints[member.id].editMode
-                                                                ? <Box p="7px 0">{pintBought ? <Check style={{color: green[500]}} /> : <Close />}</Box>
-                                                                : <Checkbox
-                                                                    color="primary"
-                                                                    edge="start"
-                                                                    checked={editPints[member.id].pint}
-                                                                    onChange={() => {
-                                                                        setEditPints({
-                                                                            ...editPints,
-                                                                            [member.id]: {
-                                                                                ...editPints[member.id],
-                                                                                pint: !editPints[member.id].pint
-                                                                            }
-                                                                        })
-                                                                    }}
+                                                        <Checkbox
+                                                            size="small"
+                                                            color="primary"
+                                                            edge="start"
+                                                            checked={pintBought > 0}
+                                                            icon={
+                                                                <Icon
+                                                                    path={mdiCheckboxBlankOutline}
+                                                                    title="Members"
+                                                                    size={0.8}
                                                                 />
                                                             }
+                                                            checkedIcon={
+                                                                <Icon
+                                                                    path={mdiCheckBoxOutline}
+                                                                    title="Members"
+                                                                    size={0.8}
+                                                                />
+                                                            }
+                                                        />
                                                         </ListItemIcon>
                                                         <ListItemText primary="Pint"  primaryTypographyProps={{color: "textSecondary"}}/>
                                                     </ListItem>
                                                     : null
                                                 }
-                                                
+
                                                 {
                                                     addedPintTypes.raidPint
                                                     ? <ListItem className={classes.nested}>
                                                         <ListItemIcon>
-                                                            {
-                                                                !editPints[member.id] || !editPints[member.id].editMode
-                                                                ? <Box p="7px 0">{raidPintBought ? <Check style={{color: green[500]}} /> : <Close />}</Box>
-                                                                : <Checkbox
-                                                                    color="primary"
-                                                                    edge="start"
-                                                                    checked={editPints[member.id].raidPint}
-                                                                    onChange={() => {
-                                                                        setEditPints({
-                                                                            ...editPints,
-                                                                            [member.id]: {
-                                                                                ...editPints[member.id],
-                                                                                raidPint: !editPints[member.id].raidPint
-                                                                            }
-                                                                        })
-                                                                    }}
+                                                        <Checkbox
+                                                            size="small"
+                                                            color="primary"
+                                                            edge="start"
+                                                            checked={!!(raidPint?.amountBought > 0)}
+                                                            indeterminate={raidPint?.amountBought === 1}
+                                                            icon={
+                                                                <Icon
+                                                                    path={mdiCheckboxBlankOutline}
+                                                                    title="Members"
+                                                                    size={0.8}
                                                                 />
                                                             }
+                                                            indeterminateIcon={
+                                                                <Icon
+                                                                    path={mdiCheckBoxOutline}
+                                                                    title="Members"
+                                                                    size={0.8}
+                                                                />
+                                                            }
+                                                            checkedIcon={
+                                                                <Icon
+                                                                    path={mdiCheckBoxMultipleOutline}
+                                                                    title="Members"
+                                                                    size={0.8}
+                                                                />
+                                                            }
+                                                        />
                                                         </ListItemIcon>
                                                         <ListItemText primary="Raid pint"  primaryTypographyProps={{color: "textSecondary"}}/>
                                                     </ListItem>
                                                     : null
                                                 }
-                                        
+
                                                 <ListItem className={classes.nested}>
-                                                    {
-                                                        !editPints[member.id] || !editPints[member.id].editMode
-                                                        ? <Button
-                                                            color="primary"
-                                                            onClick={
-                                                            () => {
-                                                                setEditPints({
-                                                                    ...editPints,
-                                                                    [member.id]: {
-                                                                        editMode: true,
-                                                                        pint: pintBought,
-                                                                        raidPint: raidPintBought
-                                                                    }
-                                                                })
-                                                            }}
-                                                        >
-                                                            Edit
-                                                        </Button>
-                                                        : <>
-                                                            <Button
-                                                                color="primary"
-                                                                onClick={
-                                                                () => {
-                                                                    setEditPints({
-                                                                        ...editPints,
-                                                                        [member.id]: false
-                                                                    })
-                                                                }
-                                                            }
-                                                            >
-                                                                Cancel
-                                                            </Button>
-                                                            <Button
-                                                                color="primary"
-                                                                variant="outlined"
-                                                                onClick={
-                                                                () => {
-                                                                    updatePints({
-                                                                        memberID: member.id,
-                                                                        pint: {
-                                                                            value: editPints[member.id].pint,
-                                                                            id: pint?.id
-                                                                        },
-                                                                        raidPint: {
-                                                                            value: editPints[member.id].raidPint,
-                                                                            id: raidPint?.id
-                                                                        }
-                                                                    })
-                                                                }
-                                                            }
-                                                            >
-                                                                Save
-                                                            </Button>
-                                                        </>
+                                                    <Button
+                                                        color="primary"
+                                                        onClick={() => {
+                                                            console.log("cancel")
+                                                        }
                                                     }
-                                                    
+                                                    >
+                                                        Cancel
+                                                    </Button>
+                                                    <Button
+                                                        color="primary"
+                                                        variant="outlined"
+                                                        onClick={
+                                                        () => {
+                                                            updatePints({
+                                                                memberID: member.id,
+                                                                pint: {
+                                                                    value: 0,
+                                                                    id: pint?.id
+                                                                },
+                                                                raidPint: {
+                                                                    value: 0,
+                                                                    id: raidPint?.id
+                                                                }
+                                                            })
+                                                        }
+                                                    }
+                                                    >
+                                                        Save
+                                                    </Button>
                                                 </ListItem>
                                             </List>
                                         </Collapse>
@@ -297,10 +291,9 @@ export default function Pints() {
                         }
                     </List>
                 }
-                
+
             </Paper>
-            
-            <Hidden smUp> 
+            <Hidden smUp>
                 <BottomBar fabAction={() => setOpen(true)} active="pints" />
             </Hidden>
         </Box>

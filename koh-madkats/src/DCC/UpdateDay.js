@@ -41,7 +41,7 @@ export default function UpdateDay({open, setOpen, preselectedDate}) {
 
     moment.locale("en")
     const [selectedDate, setSelectedDate] = useState(new Date(preselectedDate));
-    
+
     useEffect(() => {
         setSelectedDate(new Date(preselectedDate))
     }, [preselectedDate])

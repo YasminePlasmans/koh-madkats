@@ -27,6 +27,14 @@ import ChevronRight from "@material-ui/icons/ChevronRight"
 import ChevronLeft from "@material-ui/icons/ChevronLeft"
 
 
+import Icon from '@mdi/react'
+
+import { mdiCheckBoxMultipleOutline } from '@mdi/js'
+import { mdiCheckBoxOutline } from '@mdi/js'
+
+import { mdiCheckboxBlankOutline } from '@mdi/js';
+
+
 import {useQuery, useMutation} from '@apollo/react-hooks';
 // import gql from 'graphql-tag'
 
@@ -47,7 +55,7 @@ export default function NewDay({open, setOpen, preselectedDate}) {
     const classes = useStyles()
     moment.locale("en")
     const [selectedDate, setSelectedDate] = useState(new Date(preselectedDate));
-    
+
     useEffect(() => {
         setSelectedDate(new Date(preselectedDate))
     }, [preselectedDate])
@@ -72,18 +80,19 @@ export default function NewDay({open, setOpen, preselectedDate}) {
 
     useEffect(() => {
         let pintInitialisation = {}
-        
+
         members && members.forEach(member => {
-            pintInitialisation[member.id] = false
+            pintInitialisation[member.id] = 0
         })
-        
+
         setMemberPints(pintInitialisation || {})
-        
+
+        let raidpintInitialisation = {}
         members && members.forEach(member => {
-            pintInitialisation[member.id] = false
+            raidpintInitialisation[member.id] = 0
         })
-        
-        setMemberRaidPints(pintInitialisation || {})
+
+        setMemberRaidPints(raidpintInitialisation || {})
 
     }, [members])
 
@@ -104,7 +113,7 @@ export default function NewDay({open, setOpen, preselectedDate}) {
 
         const responsePint = await insertPints({variables: {date, pintType: "pint", membersFinished: size(memberPints), membersAmount: size(memberPints)}})
         const responseRaidPint = await insertPints({variables: {date, pintType: "raidPint", membersFinished: size(memberPints), membersAmount: size(memberPints)}})
-        
+
         const pintid = responsePint.data.insert_pints.returning[0].id
         const raidPintid = responseRaidPint.data.insert_pints.returning[0].id
 
@@ -119,7 +128,7 @@ export default function NewDay({open, setOpen, preselectedDate}) {
                 })
             })
 
-            
+
             each(memberRaidPints, (value, key) => {
                 insertPintsByMember({
                     variables: {
@@ -130,7 +139,7 @@ export default function NewDay({open, setOpen, preselectedDate}) {
                 })
             })
         }()
-        
+
         setOpen(false)
         setSelectedDate(new Date())
         setMemberPints({})
@@ -205,8 +214,9 @@ export default function NewDay({open, setOpen, preselectedDate}) {
             >
                 <DialogTitle id="form-dialog-title">
                 <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <Typography variant="h5">Register pints</Typography>
+                        <Typography variant="subtitle2">Register pints</Typography>
                         <IconButton
+                            size="small"
                             onClick={() => {
                                 setOpen(false)
                                 setFirstScreenActive(true)
@@ -221,67 +231,92 @@ export default function NewDay({open, setOpen, preselectedDate}) {
                         {
                             data?.members?.map(member => (
                                 <React.Fragment key={member.id}>
-                                    <ListItem>
+                                    <ListItem dense>
                                         <ListItemText primary={member.ign} primaryTypographyProps={{variant: "subtitle2"}}/>
                                     </ListItem>
+                                    <Box display="flex">
                                     <ListItem
+                                        dense
                                         className={classes.nested}
                                         button
                                         onClick={() => {
                                             setMemberPints(
                                                 {
                                                     ...memberPints,
-                                                    [member.id]: !memberPints[member.id]
-                                                }
-                                            )
-                                        }}    
-                                    >
-                                        <ListItemIcon>
-                                            <Checkbox
-                                                color="primary"
-                                                edge="start"
-                                                checked={memberPints[member.id]}
-                                                onChange={() => {
-                                                    setMemberPints(
-                                                        {
-                                                            ...memberPints,
-                                                            [member.id]: !memberPints[member.id]
-                                                        }
-                                                    )
-                                                }}
-                                            />
-                                        </ListItemIcon>
-                                        <ListItemText primary={"Pint"}  primaryTypographyProps={{color: "textSecondary"}}/>
-                                    </ListItem>  
-                                    <ListItem
-                                        className={classes.nested}
-                                        button
-                                        onClick={() => {
-                                            setMemberRaidPints(
-                                                {
-                                                    ...memberRaidPints,
-                                                    [member.id]: !memberRaidPints[member.id]
+                                                    [member.id]: memberPints[member.id] ? 0 : 1
                                                 }
                                             )
                                         }}
                                     >
                                         <ListItemIcon>
                                             <Checkbox
+                                                size="small"
                                                 color="primary"
                                                 edge="start"
-                                                checked={memberRaidPints[member.id]}
-                                                onChange={() => {
-                                                    setMemberRaidPints(
-                                                        {
-                                                            ...memberRaidPints,
-                                                            [member.id]: !memberRaidPints[member.id]
-                                                        }
-                                                    )
-                                                }}
+                                                checked={memberPints[member.id] > 0}
+                                                icon={
+                                                    <Icon
+                                                        path={mdiCheckboxBlankOutline}
+                                                        title="Members"
+                                                        size={0.8}
+                                                    />
+                                                }
+                                                checkedIcon={
+                                                    <Icon
+                                                        path={mdiCheckBoxOutline}
+                                                        title="Members"
+                                                        size={0.8}
+                                                    />
+                                                }
                                             />
                                         </ListItemIcon>
-                                        <ListItemText primary={"Raid pint"}  primaryTypographyProps={{color: "textSecondary"}}/>
-                                    </ListItem>   
+                                        <ListItemText primary={"Pint"}  primaryTypographyProps={{color: "textSecondary"}}/>
+                                    </ListItem>
+                                    <ListItem
+                                        dense
+                                        className={classes.nested}
+                                        button
+                                        onClick={() => {
+                                            let value = memberRaidPints[member.id] === 2 ? 0 : ++memberRaidPints[member.id]
+                                            setMemberRaidPints({
+                                                ...memberRaidPints,
+                                                [member.id]: value
+                                            })
+                                        }}
+                                    >
+                                        <ListItemIcon>
+                                            <Checkbox
+                                                size="small"
+                                                color="primary"
+                                                edge="start"
+                                                checked={!!(memberRaidPints[member.id] > 0)}
+                                                indeterminate={memberRaidPints[member.id] === 1}
+                                                icon={
+                                                    <Icon
+                                                        path={mdiCheckboxBlankOutline}
+                                                        title="Members"
+                                                        size={0.8}
+                                                    />
+                                                }
+                                                indeterminateIcon={
+                                                    <Icon
+                                                        path={mdiCheckBoxOutline}
+                                                        title="Members"
+                                                        size={0.8}
+                                                    />
+                                                }
+                                                checkedIcon={
+                                                    <Icon
+                                                        path={mdiCheckBoxMultipleOutline}
+                                                        title="Members"
+                                                        size={0.8}
+                                                    />
+                                                }
+                                            />
+                                        </ListItemIcon>
+                                        <ListItemText primary={"Raid\u00a0pint"} primaryTypographyProps={{color: "textSecondary"}} />
+                                    </ListItem>
+                                    </Box>
                                 </React.Fragment>
                             ))
                         }

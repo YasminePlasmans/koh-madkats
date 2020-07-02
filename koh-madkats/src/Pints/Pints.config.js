@@ -5,6 +5,7 @@ subscription GetPints($date: date!) {
     members(order_by: {archived: asc, ign: asc}) {
         pint_per_members(where: {pint: {date: {_eq: $date}}}) {
         bought
+        amountBought
         id
         pint {
           pintType
